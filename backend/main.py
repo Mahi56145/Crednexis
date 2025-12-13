@@ -5,7 +5,7 @@ from fastapi import Depends, FastAPI, File, HTTPException, Request, UploadFile, 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
-from .auth import (
+from auth import (
     create_access_token,
     create_refresh_token,
     decode_access_token,
@@ -14,12 +14,12 @@ from .auth import (
     verify_google_token,
     verify_password,
 )
-from .config import get_settings
-from .database import Base, engine, get_db
-from .models import User, PredictionRecord
-from .ml import ModelManager
-from .rate_limit import RateLimiter
-from .schemas import (
+from config import get_settings
+from database import Base, engine, get_db
+from models import User, PredictionRecord
+from ml import ModelManager
+from rate_limit import RateLimiter
+from schemas import (
     CSVPredictionResponse,
     CSVPredictionItem,
     CSVSummary,
