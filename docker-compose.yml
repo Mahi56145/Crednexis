@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-crednexis}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-crednexis}
+      POSTGRES_DB: ${POSTGRES_DB:-crednexis}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg2://${POSTGRES_USER:-crednexis}:${POSTGRES_PASSWORD:-crednexis}@db:5432/${POSTGRES_DB:-crednexis}}
+      JWT_SECRET: ${JWT_SECRET:-please-change-me}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      MODEL_PIPELINE_PATH: ${MODEL_PIPELINE_PATH:-/app/backend/models/best_model.joblib}
+      FEATURES_JSON: ${FEATURES_JSON:-/app/backend/models/feature_names.json}
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/models:/app/backend/models
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    environment:
+      REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL:-/api}
+      REACT_APP_GOOGLE_CLIENT_ID: ${REACT_APP_GOOGLE_CLIENT_ID:-${GOOGLE_CLIENT_ID:-}}
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  db-data:

@@ -12,6 +12,37 @@ dist
 dist-ssr
 *.local
 
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+.python-version
+
+# Databases & data dumps
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Build caches
+.parcel-cache
+.turbo
+.cache
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

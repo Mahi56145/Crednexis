@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install backend dependencies
+        run: pip install -r backend/requirements.txt
+      - name: Run backend tests
+        run: pytest backend/tests
+      - name: Build backend image
+        run: docker build -f backend/Dockerfile -t ghcr.io/OWNER/crednexis-backend:${{ github.sha }} .
+      - name: Placeholder push step
+        run: echo "Add docker push logic with registry creds"
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+        working-directory: frontend
+      - name: Build frontend
+        run: npm run build
+        working-directory: frontend
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
